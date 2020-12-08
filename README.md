@@ -19,6 +19,6 @@ Northone backend to-do assessment
 2. docs served on http://127.0.0.1:8000/docs/
 
 # Project Specifc Information
-- Status as 0 represents to the client pending tasks 
-- Status as 1 represents to the client completed tasks
-- due date input format is `2020-12-02 09:15:32`
+- Task Status as 0 represents to the client pending tasks 
+- Task Status as 1 represents to the client completed tasks
+- Task due date input format is `2020-12-02 09:15:32`
