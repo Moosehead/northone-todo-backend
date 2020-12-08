@@ -13,3 +13,7 @@ Northone backend to-do assessment
 
 # To run Tests 
 1. To run tests`python manage.py test`
+
+# View Swagger documentation of endpoints
+1. Make sure django server is running
+2. docs served on http://127.0.0.1:8000/docs/
