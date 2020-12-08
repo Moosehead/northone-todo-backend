@@ -17,3 +17,8 @@ Northone backend to-do assessment
 # View Swagger documentation of endpoints
 1. Make sure django server is running
 2. docs served on http://127.0.0.1:8000/docs/
+
+# Project Docs
+-Status as 0 represents to the client pending tasks 
+-Status as 1 represents to the client completed tasks
+- due date input format is `2020-12-02 09:15:32`
