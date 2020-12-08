@@ -5,15 +5,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import pytz
-import pdb
 from django.shortcuts import render
 from django.utils.timezone import now
 from django.utils import timezone
 from .serializers import *
 from .models import Task,Category
-
 from django.contrib.postgres.search import SearchVector
 
+#Handles retrieving individual tasks and then updating their information and deleting them
 class TaskDetailView(APIView):
     def get_task(self,pk):
         return Task.objects.get(id=pk)
@@ -25,7 +24,7 @@ class TaskDetailView(APIView):
     def get(self,request,pk):
         user_task  = self.get_task(pk)
         uid = request.user.id
-        self.uid_check(uid,user_task.user_id)
+        self.uid_check(uid,user_task.user_id) #checks if token matches current user id
     
         serializer = TaskGetSerializer(user_task)
         return Response(serializer.data,status=200)
@@ -33,7 +32,7 @@ class TaskDetailView(APIView):
     def patch(self,request,pk):
         user_task  = self.get_task(pk)
         uid = request.user.id
-        self.uid_check(uid,user_task.user_id)
+        self.uid_check(uid,user_task.user_id) #checks if token matches current user id
 
         serializer = TaskSerializer(user_task, data=request.data,partial = True)
         if serializer.is_valid(raise_exception=True):
@@ -48,7 +47,7 @@ class TaskDetailView(APIView):
         user_task.delete()
         return Response(status=204)
 
-
+#Handles creating new tasks and retrieving all user tasks based on filter query parameters
 class TaskView(APIView):
     def convert_to_utc(self,due_date):
         est_time = datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S")
@@ -60,7 +59,7 @@ class TaskView(APIView):
     def post(self,request):
         request.data._mutable = True
         request.data['user_id'] = request.user.id
-        request.data['status'] = 0
+        request.data['status'] = 0 #default all tasks are 0 representing pending
         due_date = request.data.get('due_date',None)
         if due_date is not None:
             utc_duedate = self.convert_to_utc(due_date)
@@ -87,6 +86,7 @@ class TaskView(APIView):
         serializer = TaskGetSerializer(all_tasks,many=True)
         return Response(serializer.data,status=200)
 
+#Handles creating new categories and retrieving all categories made by user
 class CategoryView(APIView):
     def post(self,request):
         request.data._mutable = True
@@ -102,7 +102,7 @@ class CategoryView(APIView):
         category_list = CategoryGetSerializer(all_categories,many=True).data
         return Response(category_list,status=200)
 
-
+#Search through all user tasks with search param looking in both title and description fields
 @api_view(['GET'])
 def search_tasks(request):
     uid = request.user.id

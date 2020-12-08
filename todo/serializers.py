@@ -1,20 +1,9 @@
 from rest_framework import serializers
 from .models import Task,Category
 
-# def date_check(dob):
-#     today = date.today()
-#     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-#     if (not(20 < age < 30)):
-#         raise serializers.ValidationError("You are no eligible for the job")
-#     return dob
-
 class TaskSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length = 500)
     description = serializers.CharField(max_length = 1000)
-    # due_date = serializers.SerializerMethodField('get_classification',validators=[date_check])
-
-    # def get_due_date(self, obj):
-    #     return getattr(obj, 'due_date', None)
         
     class Meta:
         model = Task
