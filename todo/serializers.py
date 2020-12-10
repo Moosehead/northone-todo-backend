@@ -7,7 +7,7 @@ class TaskSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Task
-        fields = ("id","user_id","title","description","status","timestamp","due_date","category_name")
+        fields = ("id","user_id","title","description","status","timestamp","due_date","category")
 
 class TaskGetSerializer(serializers.ModelSerializer):
     category_name = serializers.ReadOnlyField()
