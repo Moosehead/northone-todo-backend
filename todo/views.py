@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import pytz
-import pdb
 from django.shortcuts import render
 from django.utils.timezone import now
 from django.utils import timezone
@@ -92,8 +91,6 @@ class TaskView(APIView):
         category = self.request.query_params.get('category', None)
         status = self.request.query_params.get('status', None)
         all_tasks = Task.objects.filter(user_id=uid)
-        pdb.set_trace()
-
         self._check_category(category)
 
         if category!=None and status!=None:
