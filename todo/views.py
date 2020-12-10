@@ -49,22 +49,34 @@ class TaskDetailView(APIView):
 
 #Handles creating new tasks and retrieving all user tasks based on filter query parameters
 class TaskView(APIView):
-    def convert_to_utc(self,due_date):
+    def _convert_to_utc(self,due_date):
         est_time = datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S")
         time_zone = pytz.timezone("America/New_York")
         est_time = time_zone.localize(est_time)
         utc_datetime = est_time.astimezone(pytz.utc)
         return utc_datetime
 
+    def _check_due_date(self,due_date):
+        if due_date is not None:
+            utc_duedate = self._convert_to_utc(due_date)
+            if utc_duedate < now():
+                raise ParseError("Invalid due date")
+
+    def _check_category(self,cat_id):
+        if cat_id is not None:
+            try:
+                Category.objects.get(id=cat_id)
+            except Category.DoesNotExist:
+                raise ParseError("Category does not exist")
+
     def post(self,request):
         request.data._mutable = True
         request.data['user_id'] = request.user.id
         request.data['status'] = 0 #default all tasks are 0 representing pending
         due_date = request.data.get('due_date',None)
-        if due_date is not None:
-            utc_duedate = self.convert_to_utc(due_date)
-            if utc_duedate < now():
-                raise ParseError("Invalid due date")
+        category_id = request.data.get('category',None)
+        self._check_due_date(due_date)
+        self._check_category(category_id)
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -75,6 +87,8 @@ class TaskView(APIView):
         category = self.request.query_params.get('category', None)
         status = self.request.query_params.get('status', None)
         all_tasks = Task.objects.filter(user_id=uid)
+
+        self._check_category(category)
 
         if category!=None and status!=None:
             all_tasks = all_tasks.filter(category=category,status=status)
