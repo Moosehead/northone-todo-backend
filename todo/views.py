@@ -14,15 +14,19 @@ from django.contrib.postgres.search import SearchVector
 
 #Handles retrieving individual tasks and then updating their information and deleting them
 class TaskDetailView(APIView):
-    def get_task(self,pk):
-        return Task.objects.get(id=pk)
+    def _get_task(self,pk):
+        try:
+            ret_task = Task.objects.get(id=pk)
+        except Task.DoesNotExist:
+            raise ParseError("Task does not exist")
+        return ret_task
 
     def _uid_check(self,uid,task_uid):
         if str(uid) != task_uid:
             raise PermissionDenied("You do not have sufficient permissions to view this task")
 
     def get(self,request,pk):
-        user_task  = self.get_task(pk)
+        user_task  = self._get_task(pk)
         uid = request.user.id
         self._uid_check(uid,user_task.user_id) #checks if token matches current user id
     
@@ -30,7 +34,7 @@ class TaskDetailView(APIView):
         return Response(serializer.data,status=200)
 
     def patch(self,request,pk):
-        user_task  = self.get_task(pk)
+        user_task  = self._get_task(pk)
         uid = request.user.id
         self._uid_check(uid,user_task.user_id) #checks if token matches current user id
 
@@ -40,7 +44,7 @@ class TaskDetailView(APIView):
         return Response(serializer.data,status=200)
     
     def delete(self,request,pk):
-        user_task  = self.get_task(pk)
+        user_task  = self._get_task(pk)
         uid = request.user.id
         self._uid_check(uid,user_task.user_id)
 
