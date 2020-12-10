@@ -17,14 +17,14 @@ class TaskDetailView(APIView):
     def get_task(self,pk):
         return Task.objects.get(id=pk)
 
-    def uid_check(self,uid,task_uid):
+    def _uid_check(self,uid,task_uid):
         if str(uid) != task_uid:
             raise PermissionDenied("You do not have sufficient permissions to view this task")
 
     def get(self,request,pk):
         user_task  = self.get_task(pk)
         uid = request.user.id
-        self.uid_check(uid,user_task.user_id) #checks if token matches current user id
+        self._uid_check(uid,user_task.user_id) #checks if token matches current user id
     
         serializer = TaskGetSerializer(user_task)
         return Response(serializer.data,status=200)
@@ -32,7 +32,7 @@ class TaskDetailView(APIView):
     def patch(self,request,pk):
         user_task  = self.get_task(pk)
         uid = request.user.id
-        self.uid_check(uid,user_task.user_id) #checks if token matches current user id
+        self._uid_check(uid,user_task.user_id) #checks if token matches current user id
 
         serializer = TaskSerializer(user_task, data=request.data,partial = True)
         if serializer.is_valid(raise_exception=True):
@@ -42,7 +42,7 @@ class TaskDetailView(APIView):
     def delete(self,request,pk):
         user_task  = self.get_task(pk)
         uid = request.user.id
-        self.uid_check(uid,user_task.user_id)
+        self._uid_check(uid,user_task.user_id)
 
         user_task.delete()
         return Response(status=204)
