@@ -28,7 +28,8 @@ curl --location --request POST 'http://127.0.0.1:8000/api/task' \
 --header 'Authorization: Token ba2d4f068e615f3ed9f484f828faefa81b7a9c80' \
 --form 'title=demo1' \
 --form 'description=demodesc' \
---form 'category=9'
+--form 'category=9' \
+--form 'due_date=2020-12-22 09:15:32'
 
 echo " " 
 echo " " 
@@ -43,8 +44,8 @@ curl --location --request GET 'http://127.0.0.1:8000/api/category' \
 --header 'Authorization: Token ba2d4f068e615f3ed9f484f828faefa81b7a9c80'
 echo " " 
 echo " " 
-echo -e "UPDATE TASK ID 23 TO COMPLETED \n\n"
-curl --location --request PATCH 'http://127.0.0.1:8000/api/task/23' \
+echo -e "UPDATE TASK ID 44 TO COMPLETED \n\n"
+curl --location --request PATCH 'http://127.0.0.1:8000/api/task/44' \
 --header 'Authorization: Token ba2d4f068e615f3ed9f484f828faefa81b7a9c80' \
 --form 'status=1'
 
